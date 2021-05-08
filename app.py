@@ -5,12 +5,13 @@ import re
 import matplotlib.pyplot as plt
 
 import triangle
+import calendar
 
 
 st.sidebar.title('Software Test')
 option = st.sidebar.selectbox(
     'Choose the question you want to test.',
-    ["Types of Triangles", "Staff Appraisal", "Computer Sales", "Telecommunication Charges", "C/S System"])
+    ["Types of Triangles", "Perpetual Calendar", "Computer Sales", "Telecommunication Charges", "C/S System"])
 
 st.title(option)
 if option == "Types of Triangles":
@@ -138,9 +139,14 @@ if option == "Types of Triangles":
 
 
 
-#年终考核系统
-elif option == "Staff Appraisal":
-    st.header()
+#万年历
+elif option == "Perpetual Calendar":
+    st.sidebar.markdown(r'''Output the date and the day of the week of the next day of the given date.''')
+    option2 = st.sidebar.selectbox(
+        'Test samples',
+        ['Description', 'Boundary value analysis', 'Equivalence partition method', 'Customized test cases']
+    )
+
 
 #电脑销售系统
 elif option == "Computer Sales":
