@@ -309,7 +309,7 @@ elif option == "Telecommunication Charges":
                     expect = charges_data.loc[i - 1]['Pay']
                     output = tele_charges.calculate_comm_fee([minutes, n_overdue, discount])
                     result = [minutes, n_overdue, discount, expect, output]
-                    if float(expect) - output <= 0.01 or np.isnan(output):
+                    if float(expect) - output <= 0.01 or output == -1:
                         n_right = n_right + 1
                         right_samples = np.append(right_samples, result)
                     else:
