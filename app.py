@@ -8,11 +8,12 @@ import datetime
 import triangle
 import myCalendar
 import tele_charges
+import computerSale
 
 st.sidebar.title('Software Test')
 option = st.sidebar.selectbox(
     'Choose the question you want to test.',
-    ["Types of Triangles", "Perpetual Calendar", "Computer Sales", "Telecommunication Charges"])
+    ["Types of Triangles", "Perpetual Calendar", "Computer Sales", "Telecommunication Charges", "ATM"])
 
 st.title(option)
 if option == "Types of Triangles":
@@ -129,6 +130,7 @@ if option == "Types of Triangles":
             new_sample = pd.DataFrame(
                 real_sample_input.reshape((1, -1)),
                 columns=real_cols)
+            st.header('Test result')
             st.table(new_sample)
 
 
@@ -355,3 +357,117 @@ elif option == "Telecommunication Charges":
                 columns=charges_cols)
             st.table(new_sample)
 
+#ATM系统
+elif option == "ATM":
+    st.header('ATM')
+
+#电脑销售系统
+elif option == "Computer Sales":
+    option2 = st.sidebar.selectbox(
+        'Test samples',
+        ['Description', 'Boundary value analysis', 'Customized test cases']
+    )
+    if option2 == 'Description':
+        st.header('Description')
+        st.markdown(computerSale.description)
+
+    if option2 == 'Boundary value analysis':
+        st.header('边界值法')
+        st.markdown(computerSale.md1)
+        chart_data = pd.read_csv("./computerSale/基本边界值.csv", encoding="gbk")
+        st.table(chart_data)
+        st.markdown(computerSale.md2)
+        chart_data1 = pd.read_csv("./computerSale/设备健壮性边界.csv", encoding="gbk")
+        st.table(chart_data1)
+        st.markdown(computerSale.md3)
+        st.table(pd.read_csv("./computerSale/销售额基本边界值.csv"))
+        st.markdown(computerSale.md4)
+        commission_data = pd.read_csv("./computerSale/佣金问题-边界值.csv")
+
+    if option2 == 'Customized test cases':
+        st.header('输入测试用例')
+        option3 = st.selectbox(
+            'Test case',
+            ['Input via .csv file', 'Input via textfield']
+        )
+
+        if option3 == 'Input via .csv file':
+            uploaded_file = st.file_uploader("", type="csv")
+            if uploaded_file is not None:
+                chart_data = pd.read_csv(uploaded_file)
+                if st.checkbox('Show test samples'):
+                    st.write(chart_data)
+            if st.button("Test"):
+                st.header("Test Result")
+                latest_iteration = st.empty()
+                bar = st.progress(0)
+                n_sample = chart_data.shape[0]
+                n_right, n_wrong = 0, 0
+                wrong_samples = []
+                right_result = [[]]
+                wrong_result = [[]]
+                result = []
+                real_cols = ["x", "y", "z", "sale", "range type", "Expected", "Output"]
+                for i in range(1, n_sample + 1):
+                    x = chart_data.loc[i - 1]['x']
+                    y = chart_data.loc[i - 1]['y']
+                    z = chart_data.loc[i - 1]['z']
+                    expect = chart_data.loc[i - 1]['commission']
+                    output = computerSale.calculate_computer_commission([x, y, z])
+                    test_sample = chart_data.loc[i - 1].values
+                    test_sample = np.array([float(x) for x in test_sample])
+                    result = np.append(test_sample, output)
+                    if float(expect) == output:
+                        n_right = n_right + 1
+                        right_result = np.append(right_result, result)
+                    else:
+                        n_wrong = n_wrong + 1
+                        wrong_result = np.append(wrong_result, result)
+
+                    latest_iteration.text(
+                        f'Progress: {i}/{n_sample}. Accuracy: {round(n_right / n_sample, 2) * 100}%')
+                    bar.progress(i / n_sample)
+
+                if len(right_result) - 1 != 0:
+                    st.subheader("Passed samples")
+                    right_sample = pd.DataFrame(
+                        right_result.reshape((n_right, -1)),
+                        columns=real_cols)
+                    st.table(right_sample)
+
+                if len(wrong_result) - 1 != 0:
+                    st.subheader("Failed samples")
+                    wrong_sample = pd.DataFrame(
+                        wrong_result.reshape((n_wrong, -1)),
+                        columns=real_cols)
+                    st.table(wrong_sample)
+
+                st.subheader("Analysis")
+                labels = 'pass', 'fail'
+                sizes = [n_right, n_wrong]
+                plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+                plt.axis('equal')
+                st.set_option('deprecation.showPyplotGlobalUse', False)
+                st.pyplot()
+
+        if option3 == 'Input via textfield':
+            st.markdown(computerSale.md5)
+            sample_input = st.text_input(
+                'Input your own test samples. For Example: 2,1,1:12.5', ' ')
+            real_cols = ["x", "y", "z", "Expected", "Output"]
+            if sample_input != " ":
+                real_sample_input = re.split('[,:]', sample_input)
+                real_sample_input = np.array([float(x) for x in real_sample_input])
+                #print(real_sample_input)
+                output = computerSale.calculate_computer_commission(real_sample_input)
+                real_sample_input = np.append(real_sample_input, float(output))
+
+                new_sample = pd.DataFrame(
+                    real_sample_input.reshape((1, -1)),
+                    columns=real_cols)
+                st.table(new_sample)
+                if float(output) == real_sample_input[3]:
+                    st.success(f"Test passed. ")
+                    st.balloons()
+                else:
+                    st.error(f"Test failed. ")
