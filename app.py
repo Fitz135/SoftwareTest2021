@@ -1,3 +1,4 @@
+from PIL import Image
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,6 +10,8 @@ import triangle
 import myCalendar
 import tele_charges
 import computerSale
+import atm
+import theATM
 
 st.sidebar.title('Software Test')
 option = st.sidebar.selectbox(
@@ -359,7 +362,27 @@ elif option == "Telecommunication Charges":
 
 #ATM系统
 elif option == "ATM":
-    st.header('ATM')
+    option2 = st.sidebar.selectbox(
+        'Test samples',
+        ['Description', 'State transition testing']
+    )
+    if option2 == 'Description':
+        st.header('ATM')
+        st.markdown(theATM.md1)
+    elif option2 == 'State transition testing':
+        st.header('State transition testing')
+        st.subheader("状态图")
+        atm1 = Image.open("./theATM/img/ATM1.png")
+        st.image(atm1, "ATM 状态图", use_column_width=True)
+        st.write(theATM.state_diagram)
+        st.subheader("Transition Tree")
+        if st.button("run"):
+            st.write(theATM.tran_tree(theATM.state_diagram))
+            atm2 = Image.open("./theATM/img/ATM2.png")
+            st.image(atm2, "ATM Transition Tree", use_column_width=True)
+            st.subheader("状态表")
+            st.markdown(theATM.md)
+
 
 #电脑销售系统
 elif option == "Computer Sales":
