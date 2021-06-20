@@ -30,8 +30,10 @@ def tran_tree(graph):
     nodes = [0]
     init = True
     map = [0 for _ in range(len(graph['nodes']))]
+    #每次取节点查找所有关联边并填入关联节点，重复操作
     while len(nodes):
         node = nodes.pop()
+        print(node)
         for edge in graph['edges']:
             if edge[0] == node and (edge[0] != 0 or init):
                 init = False
@@ -39,10 +41,11 @@ def tran_tree(graph):
                 nodes.append(edge[1])
                 map[edge[1]] = len(tree['nodes']) - 1
                 tree['edges'].append((map[edge[0]], map[edge[1]], edge[2]))
+    print(map)
     return tree
 
 
 
 if __name__ == '__main__':
     # end_points = [i for i in range(len(graph['nodes'])) if i not in [e[0] for e in graph['edges']]]
-    print(len(tran_tree((state_diagram))['nodes']))
+    print(tran_tree((state_diagram))['nodes'])

@@ -367,18 +367,17 @@ elif option == "ATM":
         ['Description', 'State transition testing']
     )
     if option2 == 'Description':
-        st.header('ATM')
         st.markdown(theATM.md1)
     elif option2 == 'State transition testing':
         st.header('State transition testing')
         st.subheader("状态图")
-        atm1 = Image.open("./theATM/img/ATM1.png")
+        atm1 = Image.open("./theATM/img/ATM.png")
         st.image(atm1, "ATM 状态图", use_column_width=True)
         st.write(theATM.state_diagram)
         st.subheader("Transition Tree")
         if st.button("run"):
             st.write(theATM.tran_tree(theATM.state_diagram))
-            atm2 = Image.open("./theATM/img/ATM2.png")
+            atm2 = Image.open("./theATM/img/ATM_2.png")
             st.image(atm2, "ATM Transition Tree", use_column_width=True)
             st.subheader("状态表")
             st.markdown(theATM.md)
